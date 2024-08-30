@@ -1,0 +1,21 @@
+# Ignore arquivos de compilação
+/build/
+/dist/
+
+# Ignore arquivos
+*.db
+*.log
+*.pbix
+*.csv
+*.jpg 
+*.xlsx
+*.zip
+*.pdf
+*.LMParts
+*.spec
+*.doc
+*.txt
+
+# Ignore pastas específicas
+.vscode/
+__pycache__/

@@ -1,0 +1,27 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"sqltools.connections": [
+			{
+				"previewLimit": 50,
+				"server": "localhost",
+				"port": 5432,
+				"driver": "PostgreSQL",
+				"name": "Biblia",
+				"database": "Biblia",
+				"username": "postgres"
+			},
+			{
+				"previewLimit": 50,
+				"driver": "SQLite",
+				"name": "LM Parts",
+				"database": "${workspaceFolder:LM Parts}/bi_lmparts.db"
+			}
+		],
+		"sqltools.useNodeRuntime": true
+	}
+}
