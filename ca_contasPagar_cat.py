@@ -4,7 +4,6 @@ import pandas as pd
 import math
 import time
 import variaveis
-import calendar
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import ast
@@ -234,7 +233,6 @@ def getContasPagar(conn):
             # definindo variaveis para criar o nome do arquivo
             ano = data_atual.strftime('%Y')
             mes = data_atual.strftime('%m')
-            dia = data_atual.strftime('%d')
 
             # extraindo total de páginas
             total_paginas = math.ceil(data['totalItems'] / 100)

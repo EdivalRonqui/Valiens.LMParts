@@ -1,14 +1,14 @@
 import sqlite3
-from conexao import DatabaseConnections, sqlite_db, DataManager
-import queries
-from ca_categorias import getCategorias
-from ca_centroCustos import getCentroCustos
-from ca_clientes import getClientes
+from conexao import DatabaseConnections, sqlite_db #, DataManager
+# import queries
+# from ca_categorias import getCategorias
+# from ca_centroCustos import getCentroCustos
+# from ca_clientes import getClientes
 from ca_contasPagar_cat import getContasPagar
 from ca_contasReceber_cat import getContasReceber
-from ca_empresas import getEmpresas
-from ca_servicos import getServicos
-from ca_vendas import getVendas
+# from ca_empresas import getEmpresas
+# from ca_servicos import getServicos
+# from ca_vendas import getVendas
 
 def main():
 
