@@ -12,6 +12,7 @@ from pathlib import Path
 
 def getContasPagar(conn):
     #### Inicio do processo de coleta de dados ####
+    
     arquivo = 'contaspagar'
     print('-'*50)
     print(f'{'-'*20}[{arquivo}]{'-'*20}')
@@ -26,10 +27,10 @@ def getContasPagar(conn):
     tokens = variaveis.tokens
 
     # define quantidade de meses que utilizaremos para realizar a consulta incremental
-    meses = int(variaveis.meses_retroativos)
+    # meses = int(variaveis.meses_retroativos)
 
     # define quantidade de anos que utilizaremos para realizar a consulta incremental
-    anos = int(variaveis.anos_consulta)
+    # anos = int(variaveis.anos_consulta)
 
     # define a lista das empresas e dos tokens
     lista_empresas = list(tokens.keys())
@@ -73,7 +74,7 @@ def getContasPagar(conn):
             try:
                 json_categorias = json.loads(response.text)['categoriesRatio']
                 return json.dumps(json_categorias)
-            except:
+            except Exception:
                 None
         else:
             return None
@@ -81,16 +82,16 @@ def getContasPagar(conn):
     total_empresas = len(lista_tokens)
 
     # Data atual
-    data = datetime.now()
+    data = datetime.today()
 
     # define inicio das consultas retrotativas
-    data_atual = data - relativedelta( months= meses)
-    data_atual = data_atual.replace(day=1)
+    data_atual = data + relativedelta( days = -1)
+    # data_atual = data_atual.replace(day=1)
     # data_atual = datetime(2024,1,1) #para testes
     
     # define última data a ser consultada
-    data_fim = data + relativedelta( months= meses)
-    data_fim = data_fim.replace(day=1)
+    data_fim = data + relativedelta( days = -1)
+    # data_fim = data + relativedelta( years= anos)
     # data_fim = datetime(2024,2,1) #para testes
 
     # Lista de todas as colunas a serem verificadas
@@ -211,14 +212,16 @@ def getContasPagar(conn):
     }
 
     i = 0
-    pg = 48
+    pg = 1
 
     while data_atual <= data_fim:
         
         data_inicial = data_atual
-        data_final = data_atual.replace(day=calendar.monthrange(data_atual.year, data_atual.month)[1])
+        data_final = data_inicial
+        # data_final = data_atual.replace(day=calendar.monthrange(data_atual.year, data_atual.month)[1])
+        data_final = data_final + timedelta(days=1)
         print(data_atual)
-        print(data_fim)
+        print(data_final)
         while i < total_empresas: 
             print('-'*50)
             print(f'Total de empresas: {total_empresas}. Empresa atual: {i+1}\n')
@@ -238,7 +241,7 @@ def getContasPagar(conn):
             
             while pg <= total_paginas:
                 print(f'Pagina atual {pg} de {total_paginas}')
-                id_empresa = lista_empresas[i]
+                # id_empresa = lista_empresas[i]
                 empresa = lista_nomeEmpresas[i]
                 # invoca requisição conforme token
                 consulta = consulta = requisicao(lista_tokens[i],data_inicial,data_final,pg)
@@ -250,7 +253,6 @@ def getContasPagar(conn):
                 df = pd.json_normalize(movimentos)
                 # insere o id da empresa
                 df['id_empresa'] = lista_empresas[i]
-                
                 
                 for index, row in df.iterrows():
                     # faz o script aguardar um segundo para próxima linha
@@ -274,7 +276,7 @@ def getContasPagar(conn):
                         if pd.notna(categories_ratio_content) and categories_ratio_content != 'nan':
                             try:
                                 categories_ratio = ast.literal_eval(categories_ratio_content)
-                            except:
+                            except Exception:
                                 print("Erro ao avaliar categories_ratio_content: ", categories_ratio_content)
                                 continue  # Continua para a próxima iteração do loop se não conseguir avaliar
                             
@@ -364,7 +366,8 @@ def getContasPagar(conn):
             i += 1
             pg = 1
         
-        data_atual = data_inicial + relativedelta(months=1)
+        # data_atual = data_inicial + relativedelta(months=1)
+        data_atual = data_atual + timedelta(days=1)
         print(data_atual)
         time.sleep(5)
         i = 0

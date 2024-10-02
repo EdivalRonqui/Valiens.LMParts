@@ -67,7 +67,7 @@ def getCentroCustos(conn):
         # codifica os textos conforme necessário para aceitar caracteres latino americano
         # df_final.to_csv(folder_path,index=False, encoding='utf-8-sig', sep=';')
         # print(df_final)
-        df_final.to_sql(arquivo, conn, if_exists='append', index=False)
+        df_final.to_sql(arquivo, conn, if_exists='replace', index=False)
 
         i += 1
 

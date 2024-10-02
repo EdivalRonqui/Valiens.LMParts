@@ -11,7 +11,6 @@ import ast
 from pathlib import Path
 
 def getContasReceber(conn):
-
     #### Inicio do processo de coleta de dados ####
     arquivo = 'contasreceber'
     print('-'*50)
@@ -22,16 +21,15 @@ def getContasReceber(conn):
     
     ###### Relação das empresas e suas respectivas chaves ######
     empresas = variaveis.empresas
-    ###### Relação das empresas e suas respectivas chaves ######
 
     # tokens de cada uma das empresas conforme dicionario acima
     tokens = variaveis.tokens
 
     # define quantidade de meses que utilizaremos para realizar a consulta incremental
-    meses = int(variaveis.meses_retroativos)
+    # meses = int(variaveis.meses_retroativos)
 
     # define quantidade de anos que utilizaremos para realizar a consulta incremental
-    anos = int(variaveis.anos_consulta)
+    # anos = int(variaveis.anos_consulta)
 
     # define a lista das empresas e dos tokens
     lista_empresas = list(tokens.keys())
@@ -50,19 +48,19 @@ def getContasReceber(conn):
             "type": "REVENUE"
         }
         headers = {
-                "authority": "services.contaazul.com",
-                "accept": "application/json",
-                "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
-                "origin": "https://app.contaazul.com",
-                "referer": "https://app.contaazul.com/",
-                "sec-ch-ua": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-                "sec-ch-ua-mobile": "?0",
-                "sec-ch-ua-platform": '"Windows"',
-                "sec-fetch-dest": "empty",
-                "sec-fetch-mode": "cors",
-                "sec-fetch-site": "same-site",
-                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                "x-authorization": token
+            "authority": "services.contaazul.com",
+            "accept": "application/json",                                                  
+            "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+            "origin": "https://app.contaazul.com",
+            "referer": "https://app.contaazul.com/",
+            "sec-ch-ua": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": '"Windows"',
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-site",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "x-authorization": token
         }
         response = requests.request("POST", url, json=payload, headers=headers, params=querystring)
         return response
@@ -98,16 +96,16 @@ def getContasReceber(conn):
     total_empresas = len(lista_tokens)
 
     # Data atual
-    data = datetime.now()
+    data = datetime.today()
 
     # define inicio das consultas retrotativas
-    data_atual = data - relativedelta( months= meses)
-    data_atual = data_atual.replace(day=1)
+    data_atual = data + relativedelta( days=-1)
+    # data_atual = data_atual.replace(day=1)
     # data_atual = datetime(2024,1,1) #para testes
     
     # define última data a ser consultada
-    data_fim = data + relativedelta( months= meses)
-    data_fim = data_fim.replace(day=1)
+    data_fim = data + relativedelta( days=-1)
+    # data_fim = data_fim.replace(day=1)
     # data_fim = datetime(2024,2,1) #para testes
 
     # Lista de todas as colunas a serem verificadas
@@ -172,13 +170,69 @@ def getContasReceber(conn):
     'fk_centroCusto'
     ]
 
+    tipos = {
+        'conciliated': 'bool',
+        'description': 'str',
+        'dueDate': 'str',  # pandas não tem tipo 'date' nativo, use 'str' e depois converta
+        'expectedPaymentDate': 'str',
+        'financialAccount_cashierAccount': 'bool',
+        'financialAccount_contaAzulDigital': 'bool',
+        'financialAccount_id': 'str',
+        'financialAccount_type': 'str',
+        'financialEvent_categoryCount': 'int',
+        'financialEvent_categoryDescriptions': 'str',
+        'financialEvent_competenceDate': 'str',
+        'financialEvent_costCenterCount': 'int',
+        'financialEvent_description': 'str',
+        'financialEvent_id': 'str',
+        'financialEvent_negotiator_id': 'str',
+        'financialEvent_negotiator_name': 'str',
+        'financialEvent_numberOfInstallments': 'int',
+        'financialEvent_recurrenceIndex': 'int',
+        'financialEvent_reference_id': 'str',
+        'financialEvent_reference_origin': 'str',
+        'financialEvent_reference_revision': 'int',
+        'financialEvent_scheduled': 'bool',
+        'financialEvent_type': 'str',
+        'financialEvent_value': 'float',
+        'financialEvent_version': 'int',
+        'fk_categoria': 'str',
+        'hasDigitalReceipt': 'bool',
+        'id_empresa': 'str',
+        'index': 'int',
+        'lastAcquittanceDate': 'str',
+        'loss': 'str',
+        'note': 'str',
+        'paid': 'float',
+        'paymentRequest': 'str',
+        'recurrent': 'bool',
+        'reference': 'str',
+        'status': 'str',
+        'totalNetValue': 'float',
+        'unpaid': 'float',
+        'valueCategory': 'float',
+        'valueComposition_discount': 'float',
+        'valueComposition_fee': 'float',
+        'valueComposition_fine': 'float',
+        'valueComposition_grossValue': 'float',
+        'valueComposition_interest': 'float',
+        'valueComposition_netValue': 'float',
+        'version': 'int',
+        'categoryValue' : 'str',
+        'costCenterId' : 'str',
+        'costCenterValue': 'float',
+        'valor_lancamento': 'float',
+        'fk_centroCusto' : 'str'
+    }
+
     i = 0
     pg = 1
 
     while data_atual <= data_fim:
         print(f'Data Atual: {data_atual} - Data fim: {data_fim}')
         data_inicial = data_atual
-        data_final = data_atual.replace(day=calendar.monthrange(data_atual.year, data_atual.month)[1])
+        data_final = data_inicial
+        data_final = data_final
 
         while i < total_empresas: 
             print('-'*50)
@@ -199,7 +253,7 @@ def getContasReceber(conn):
             
             while pg <= total_paginas:
                 print(f'Pagina atual {pg} de {total_paginas}')
-                id_empresa = lista_empresas[i]
+                # id_empresa = lista_empresas[i]
                 empresa = lista_nomeEmpresas[i]
                 # invoca requisição conforme token
                 consulta = consulta = requisicao(lista_tokens[i],data_inicial,data_final,pg)
@@ -214,7 +268,11 @@ def getContasReceber(conn):
 
                 for index, row in df.iterrows():
                     print(row['financialEvent.id'], datetime.now()) 
-                    df.at[index, 'retorno'] = requisicao_detalhes(lista_tokens[i],row['financialEvent.id'])
+                    try:
+                        df.at[index, 'retorno'] = requisicao_detalhes(lista_tokens[i],row['financialEvent.id'])
+                    except Exception as e:
+                        print(f"Erro ao processar o evento financeiro {row['financialEvent.id']}: {e}")
+                        continue
                     # faz o script aguardar um segundo para próxima linha
                     time.sleep(1)
 
@@ -230,7 +288,7 @@ def getContasReceber(conn):
                         if pd.notna(categories_ratio_content) and categories_ratio_content != 'nan':
                             try:
                                 categories_ratio = ast.literal_eval(categories_ratio_content)
-                            except:
+                            except Exception:
                                 print("Erro ao avaliar categories_ratio_content: ", categories_ratio_content)
                                 continue  # Continua para a próxima iteração do loop se não conseguir avaliar
                             
@@ -283,11 +341,10 @@ def getContasReceber(conn):
                 # cria a chave composta entre empresa e chave da categoria
                 df_final['fk_categoria'] = df_final['id_empresa'].astype(str) + '|' + df_final['categoryId'].astype(str)
                 df_final['fk_centroCusto'] = df_final['id_empresa'].astype(str) + '|' + df_final['costCenterId'].astype(str)
-                print(df_final['fk_categoria'])
+                
                 # Para adicionar colunas que não existem no DataFrame como nulas, você pode fazer:
                 for coluna in colunas:
                     if coluna not in df_final.columns:
-                        # print(coluna)
                         df_final[coluna] = None
 
                 # Verifica as colunas do DataFrame que não estão na lista desejada
@@ -297,6 +354,8 @@ def getContasReceber(conn):
                 df_final = df_final.drop(columns=colunas_para_remover)
 
                 df_final = df_final[colunas]
+                df_final.fillna(0, inplace=True)
+                df_final = df_final.astype(tipos)
 
                 print(f'{lista_empresas[i]} - Empresa {empresa}\nTotal de páginas: {total_paginas}. Página atual: {pg}\n')
                 
@@ -305,7 +364,6 @@ def getContasReceber(conn):
                 Path(folder_path).mkdir(parents=True, exist_ok=True)
                 folder_path = f'{folder_path}{ano}{mes}__pagina_{pg}.csv'
                 # df_final.to_csv(folder_path,index=False, encoding='utf-8-sig', sep=';')
-
                 df_final.to_sql(arquivo, conn, if_exists='append', index=False)
 
                 pg += 1
@@ -319,7 +377,7 @@ def getContasReceber(conn):
             i += 1
             pg = 1
         
-        data_atual = data_inicial + relativedelta(months=1)
+        data_atual = data_inicial + timedelta(days=1)
         print(data_atual)
         time.sleep(1)
         i = 0

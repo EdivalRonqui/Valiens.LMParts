@@ -25,18 +25,18 @@ def main():
         #     "contasreceber": [queries.create_ContasReceber],
         #     "empresas": [queries.create_Empresas],
         #     "servicos": [queries.create_Servicos],
-        #     "vendas": [queries.create_Vendas]
+        #     "vendas": [queries.create_Vendas]gh
         # }
 
         # for _, query in qry.items():
         #     data_manager.create_table(query[0])
     
-        getCategorias(sqlite_conn)
-        getCentroCustos(sqlite_conn)
-        getClientes(sqlite_conn)
-        getEmpresas(sqlite_conn)
-        getServicos(sqlite_conn)
-        getVendas(sqlite_conn)
+        # getCategorias(sqlite_conn)
+        # getCentroCustos(sqlite_conn)
+        # getClientes(sqlite_conn)
+        # getEmpresas(sqlite_conn)
+        # getServicos(sqlite_conn)
+        # getVendas(sqlite_conn)
         getContasPagar(sqlite_conn)
         getContasReceber(sqlite_conn)
         

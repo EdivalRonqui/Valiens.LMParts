@@ -22,7 +22,7 @@ def getEmpresas(conn):
 
     # codifica os textos conforme necessário para aceitar caracteres latino americano
     # df.to_csv(folder_path,index=False, encoding='utf-8-sig', sep=';')
-    df.to_sql(arquivo, conn, if_exists='append', index=False)
+    df.to_sql(arquivo, conn, if_exists='replace', index=False)
 
 
 # if __name__ == '__main__':

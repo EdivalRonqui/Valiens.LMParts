@@ -95,7 +95,7 @@ def getClientes(conn):
             Path(folder_path).mkdir(parents=True, exist_ok=True)
             folder_path = f'{folder_path}/clientes{pg}.csv'
             # df.to_csv(folder_path,index=False, encoding='utf-8-sig', sep=';')
-            df.to_sql(arquivo, conn, if_exists='append', index=False)
+            df.to_sql(arquivo, conn, if_exists='replace', index=False)
 
             print(f'Empresa {empresa}\n Total de páginas: {total_paginas}. Página atual: {pg}')
             pg += 1

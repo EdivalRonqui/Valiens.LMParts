@@ -93,11 +93,11 @@ def getServicos(conn):
                         df[column] = None
 
                 df = df[expected_columns]   
-                folder_path = f'{variaveis.path}{arquivo}/{lista_empresas[i]}/'
-                Path(folder_path).mkdir(parents=True, exist_ok=True)
-                folder_path = f'{folder_path}{pg}.csv'
+                # folder_path = f'{variaveis.path}{arquivo}/{lista_empresas[i]}/'
+                # Path(folder_path).mkdir(parents=True, exist_ok=True)
+                # folder_path = f'{folder_path}{pg}.csv'
                 # df.to_csv(folder_path, index=False, encoding='utf-8-sig', sep=';',quotechar='"')
-                df.to_sql(arquivo, conn, if_exists='append', index=False)
+                df.to_sql(arquivo, conn, if_exists='replace', index=False)
             
             pg += 1
 
