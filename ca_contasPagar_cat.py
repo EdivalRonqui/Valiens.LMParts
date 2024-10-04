@@ -5,11 +5,11 @@ import math
 import time
 import variaveis
 from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
+# from dateutil.relativedelta import relativedelta
 import ast
 from pathlib import Path
 
-def getContasPagar(conn):
+def getContasPagar(conn, data_atual, data_fim):
     #### Inicio do processo de coleta de dados ####
     
     arquivo = 'contaspagar'
@@ -81,15 +81,15 @@ def getContasPagar(conn):
     total_empresas = len(lista_tokens)
 
     # Data atual
-    data = datetime.today()
+    # data = datetime.today()
 
     # define inicio das consultas retrotativas
-    data_atual = data + relativedelta( days = -1)
+    # data_atual = data + relativedelta( days = -1)
     # data_atual = data_atual.replace(day=1)
     # data_atual = datetime(2024,1,1) #para testes
     
     # define última data a ser consultada
-    data_fim = data + relativedelta( days = -1)
+    # data_fim = data + relativedelta( days = -1)
     # data_fim = data + relativedelta( years= anos)
     # data_fim = datetime(2024,2,1) #para testes
 
@@ -214,13 +214,12 @@ def getContasPagar(conn):
     pg = 1
 
     while data_atual <= data_fim:
+        print(f'Processando Data Atual: {data_atual} - Data fim: {data_fim}')
         
         data_inicial = data_atual
         data_final = data_inicial
         # data_final = data_atual.replace(day=calendar.monthrange(data_atual.year, data_atual.month)[1])
         data_final = data_final + timedelta(days=1)
-        print(data_atual)
-        print(data_final)
         while i < total_empresas: 
             print('-'*50)
             print(f'Total de empresas: {total_empresas}. Empresa atual: {i+1}\n')
@@ -343,6 +342,7 @@ def getContasPagar(conn):
 
                 df_final = df_final[colunas]
                 df_final.fillna(0, inplace=True)
+                df_final = df_final.infer_objects(copy=False)
                 df_final = df_final.astype(tipos)
 
                 print(f'{lista_empresas[i]} - Empresa {empresa}\nTotal de páginas: {total_paginas}. Página atual: {pg}\n')
@@ -366,8 +366,7 @@ def getContasPagar(conn):
         
         # data_atual = data_inicial + relativedelta(months=1)
         data_atual = data_atual + timedelta(days=1)
-        print(data_atual)
-        time.sleep(5)
+        time.sleep(1)
         i = 0
     
     # Marcar o fim

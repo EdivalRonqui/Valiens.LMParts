@@ -1,5 +1,8 @@
 import sqlite3
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from conexao import DatabaseConnections, sqlite_db #, DataManager
+import variaveis
 # import queries
 # from ca_categorias import getCategorias
 # from ca_centroCustos import getCentroCustos
@@ -11,7 +14,17 @@ from ca_contasReceber_cat import getContasReceber
 # from ca_vendas import getVendas
 
 def main():
+    data = datetime.today()
 
+    # define inicio das consultas retrotativas
+    data_atual = data + relativedelta(days = variaveis.periodo)
+    # define última data a ser consultada
+    data_fim = data + relativedelta( days = -variaveis.periodo)
+    
+    # altera variáveis para processar um período
+    data_atual = datetime(2022,1,1)
+    data_fim = datetime(2023,12,31)
+    
     db_connections = DatabaseConnections(sqlite_db)
     try:
         sqlite_conn = db_connections.connect_sqlite()
@@ -37,8 +50,8 @@ def main():
         # getEmpresas(sqlite_conn)
         # getServicos(sqlite_conn)
         # getVendas(sqlite_conn)
-        getContasPagar(sqlite_conn)
-        getContasReceber(sqlite_conn)
+        getContasPagar(sqlite_conn, data_atual, data_fim)
+        getContasReceber(sqlite_conn, data_atual, data_fim)
         
     except sqlite3.Error as e:
         print("Erro ao conectar ou inserir dados no SQLite:", e)
