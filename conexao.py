@@ -30,3 +30,7 @@ class DataManager:
 
     def create_table(self, query):
         self.sqlite_cursor.execute(query)
+
+    def select_data(self, query):
+        return self.sqlite_cursor.execute(query)
+        

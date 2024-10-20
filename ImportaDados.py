@@ -1,34 +1,22 @@
 import sqlite3
 from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
-from conexao import DatabaseConnections, sqlite_db #, DataManager
-import variaveis
-# import queries
+from conexao import DatabaseConnections, sqlite_db, DataManager
+# import variaveis
+import queries
 # from ca_categorias import getCategorias
 # from ca_centroCustos import getCentroCustos
 # from ca_clientes import getClientes
-from ca_contasPagar_cat import getContasPagar
-from ca_contasReceber_cat import getContasReceber
 # from ca_empresas import getEmpresas
 # from ca_servicos import getServicos
 # from ca_vendas import getVendas
+from ca_contasPagar_cat import getContasPagar
+from ca_contasReceber_cat import getContasReceber
 
 def main():
-    data = datetime.today()
-
-    # define inicio das consultas retrotativas
-    data_atual = data + relativedelta(days = variaveis.periodo)
-    # define última data a ser consultada
-    data_fim = data + relativedelta( days = -variaveis.periodo)
-    
-    # altera variáveis para processar um período
-    data_atual = datetime(2022,1,1)
-    data_fim = datetime(2023,12,31)
-    
     db_connections = DatabaseConnections(sqlite_db)
     try:
         sqlite_conn = db_connections.connect_sqlite()
-        # data_manager = DataManager(sqlite_conn.cursor())
+        data_manager = DataManager(sqlite_conn.cursor())
         
         # qry = {
         #     "categorias": [queries.create_Categorias],
@@ -42,16 +30,38 @@ def main():
         # }
 
         # for _, query in qry.items():
-        #     data_manager.create_table(query[0])
+            # data_manager.create_table(query[0])
     
+        # Processos executados mensalmente
         # getCategorias(sqlite_conn)
         # getCentroCustos(sqlite_conn)
         # getClientes(sqlite_conn)
         # getEmpresas(sqlite_conn)
         # getServicos(sqlite_conn)
         # getVendas(sqlite_conn)
-        getContasPagar(sqlite_conn, data_atual, data_fim)
-        getContasReceber(sqlite_conn, data_atual, data_fim)
+        
+        # Processos executados DIARIAMENTE
+
+        hoje = datetime.today()
+        data_fim = datetime(hoje.year, hoje.month, hoje.day) +  timedelta(days = -1)
+        
+        data = datetime.strptime(data_manager.select_data(queries.select_MaxContasPagar).fetchone()[0], "%Y-%m-%d")
+        data_inicio = data +  timedelta(days = +1)
+        
+        # data_inicio = datetime(2022, 6, 1)
+        # data_fim = datetime(2023, 12, 31)
+        print('-'*50)
+        print(f'data inicio: {data_inicio} | data fim: {data_fim}')
+        
+        getContasPagar(sqlite_conn, data_inicio, data_fim)
+        
+        data = datetime.strptime(data_manager.select_data(queries.select_MaxContasReceber).fetchone()[0], "%Y-%m-%d")
+        data_inicio = data +  timedelta(days = +1)
+        # data_inicio = datetime(2022, 6, 1)
+        print('-'*50)
+        print(f'data inicio: {data_inicio} | data fim: {data_fim}')
+        getContasReceber(sqlite_conn, data_inicio, data_fim)
+        print('-'*50)
         
     except sqlite3.Error as e:
         print("Erro ao conectar ou inserir dados no SQLite:", e)

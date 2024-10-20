@@ -514,3 +514,13 @@ insert_Servicos = '''
         FOREIGN KEY (id_empresa) REFERENCES empresas(id)
     );
     '''
+
+
+# SELECT DATA
+select_MaxContasPagar = '''
+    SELECT MAX(dueDate) as lastDate from contaspagar;
+    '''
+
+select_MaxContasReceber = '''
+    SELECT MAX(dueDate) as lastDate from contasreceber;
+    '''

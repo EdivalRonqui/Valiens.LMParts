@@ -5,9 +5,8 @@ import math
 import time
 import variaveis
 from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
 import ast
-from pathlib import Path
+# from pathlib import Path
 
 def getContasReceber(conn, data_atual, data_fim):
     #### Inicio do processo de coleta de dados ####
@@ -243,8 +242,8 @@ def getContasReceber(conn, data_atual, data_fim):
             data = json.loads(consulta.text)
             
             # definindo variaveis para criar o nome do arquivo
-            ano = data_atual.strftime('%Y')
-            mes = data_atual.strftime('%m')
+            # ano = data_atual.strftime('%Y')
+            # mes = data_atual.strftime('%m')
 
             # extraindo total de páginas
             total_paginas = math.ceil(data['totalItems'] / 100)
@@ -285,9 +284,9 @@ def getContasReceber(conn, data_atual, data_fim):
                         categories_ratio_content = str(row.get('retorno', ''))
                         if pd.notna(categories_ratio_content) and categories_ratio_content != 'nan':
                             try:
-                                categories_ratio = ast.literal_eval(categories_ratio_content)
-                            except Exception:
-                                print("Erro ao avaliar categories_ratio_content: ", categories_ratio_content)
+                                categories_ratio = json.loads(categories_ratio_content)
+                            except Exception as e:
+                                print("Contas Receber - Erro ao avaliar categories_ratio_content: ", categories_ratio_content, "\nException:", e)
                                 continue  # Continua para a próxima iteração do loop se não conseguir avaliar
                             
                             if categories_ratio is not None:  # Adiciona esta linha para verificar se categories_ratio é None
@@ -359,9 +358,9 @@ def getContasReceber(conn, data_atual, data_fim):
                 print(f'{lista_empresas[i]} - Empresa {empresa}\nTotal de páginas: {total_paginas}. Página atual: {pg}\n')
                 
                 # define pasta onde será salvo
-                folder_path = f'c:/_work/valiens/lm parts/{arquivo}/'
-                Path(folder_path).mkdir(parents=True, exist_ok=True)
-                folder_path = f'{folder_path}{ano}{mes}__pagina_{pg}.csv'
+                # folder_path = f'c:/_work/valiens/lm parts/{arquivo}/'
+                # Path(folder_path).mkdir(parents=True, exist_ok=True)
+                # folder_path = f'{folder_path}{ano}{mes}__pagina_{pg}.csv'
                 # df_final.to_csv(folder_path,index=False, encoding='utf-8-sig', sep=';')
                 df_final.to_sql(arquivo, conn, if_exists='append', index=False)
 
