@@ -5,8 +5,10 @@ import math
 import time
 import variaveis
 from datetime import datetime, timedelta
+from conexao import DataManager
+import queries
 # from dateutil.relativedelta import relativedelta
-import ast
+# import ast
 # from pathlib import Path
 
 def getContasPagar(conn, data_atual, data_fim):
@@ -323,8 +325,6 @@ def getContasPagar(conn, data_atual, data_fim):
                 # substitui no nome das colunas o "." por "_"
                 df_final.rename(columns=lambda x: x.replace('.', '_'), inplace=True)
 
-                # df_final.to_excel('validaColunas.xlsx')
-
                 # cria a chave composta entre empresa e chave da categoria
                 df_final['fk_categoria'] = df_final['id_empresa'].astype(str) + '|' + df_final['categoryId'].astype(str)
                 df_final['fk_centroCusto'] = df_final['id_empresa'].astype(str) + '|' + df_final['costCenterId'].astype(str)
@@ -346,18 +346,16 @@ def getContasPagar(conn, data_atual, data_fim):
                 df_final = df_final.astype(tipos)
 
                 print(f'{lista_empresas[i]} - Empresa {empresa}\nTotal de páginas: {total_paginas}. Página atual: {pg}\n')
+                # df_final.to_csv(f'./{arquivo}_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv', index=False, sep=';', encoding='utf-8')
                 
-                # define pasta onde será salvo
-                # folder_path = f'c:/_work/valiens/lm parts/{arquivo}/'
-                # Path(folder_path).mkdir(parents=True, exist_ok=True)
-                # folder_path = f'{folder_path}{ano}{mes}__pagina_{pg}.csv'
-                # df_final.to_csv(folder_path,index=False, encoding='utf-8-sig', sep=';')
-                df_final.to_sql(arquivo, conn, if_exists='append', index=False)
+                data_manager = DataManager(conn.cursor())
+                data_manager.upsert_data(df_final, queries.upsert_ContasPagar)
+                # df_final.to_sql(arquivo, conn, if_exists='append', index=False)
 
                 pg += 1
                 # Aguarda 5 segundos
                 if total_paginas > 1:
-                    time.sleep(1.5)
+                    time.sleep(1)
                 else:
                     continue
             

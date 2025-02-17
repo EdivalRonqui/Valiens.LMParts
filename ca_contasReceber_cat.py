@@ -5,7 +5,10 @@ import math
 import time
 import variaveis
 from datetime import datetime, timedelta
-import ast
+from conexao import DataManager
+import queries
+
+# import ast
 # from pathlib import Path
 
 def getContasReceber(conn, data_atual, data_fim):
@@ -356,13 +359,11 @@ def getContasReceber(conn, data_atual, data_fim):
                 df_final = df_final.astype(tipos)
 
                 print(f'{lista_empresas[i]} - Empresa {empresa}\nTotal de páginas: {total_paginas}. Página atual: {pg}\n')
+                # df_final.to_csv(f'./{arquivo}_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv', index=False, sep=';', encoding='utf-8')
                 
-                # define pasta onde será salvo
-                # folder_path = f'c:/_work/valiens/lm parts/{arquivo}/'
-                # Path(folder_path).mkdir(parents=True, exist_ok=True)
-                # folder_path = f'{folder_path}{ano}{mes}__pagina_{pg}.csv'
-                # df_final.to_csv(folder_path,index=False, encoding='utf-8-sig', sep=';')
-                df_final.to_sql(arquivo, conn, if_exists='append', index=False)
+                data_manager = DataManager(conn.cursor())
+                data_manager.upsert_data(df_final, queries.upsert_ContasReceber)
+                # df_final.to_sql(arquivo, conn, if_exists='append', index=False)
 
                 pg += 1
                 # Aguarda 5 segundos
@@ -370,7 +371,6 @@ def getContasReceber(conn, data_atual, data_fim):
                     time.sleep(1)
                 else:
                     continue
-
             
             i += 1
             pg = 1
@@ -387,11 +387,3 @@ def getContasReceber(conn, data_atual, data_fim):
     tempo_formatado = str(timedelta(seconds=diferenca_tempo))
 
     print(f"Tempo de execução da requisição {arquivo} : {tempo_formatado}")
-    
-
-    
-
-    # df_final.to_excel('teste_ContasPagar_ALL.xlsx')
-
-# if __name__ == '__main__':
-#     main()

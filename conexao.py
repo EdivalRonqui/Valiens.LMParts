@@ -24,8 +24,7 @@ class DataManager:
         self.sqlite_cursor = sqlite_cursor
 
     def upsert_data(self, rows, query):
-        for row in rows:
-            self.sqlite_cursor.execute(query, row)
+        self.sqlite_cursor.executemany(query, rows.values.tolist())
         self.sqlite_cursor.connection.commit()
 
     def create_table(self, query):
